@@ -1,0 +1,1 @@
+export const hadnleLog = <ErrorLike extends Error, DataLike> => {}

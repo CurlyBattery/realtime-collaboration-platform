@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+generator default {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String      @id @default(uuid())
+  email      String      @unique
+  password   String
+  createdAt  DateTime    @default(now()) @map("created_at")
+  workspaces Workspace[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id        String   @id @default(uuid())
+  name      String
+  ownerId   String   @map("owner_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  owner     User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  documents Document[]
+
+  @@map("workspaces")
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  title       String
+  content     String
+  workspaceId String   @map("workspace_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
